@@ -15,35 +15,42 @@ class GroupsController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function show()
-    {
-        return RequestController::getVoosJson();
-    }
-
     public function AllGroups(){
         $voos = RequestController::getVoosJson();
-        $groupVoos = $this->FormatJson($voos);
+
+        $groupVoos = $this->GroupByPrecoTotal($voos);
+        $groupFormatado = $this->FormatGroups($groupVoos);
+        $groupMaisBarato = $this->PickGroupMaisBartao($groupFormatado);
+
+        $groupVoos = $this->FormatJson($groupFormatado);
 
         return $groupVoos;
     }
 
-    private function FormatJson($voos){
-        $groupVoos = $this->GroupByPrecoTotal($voos);
-        $groupFormatado = $this->FormatGroups($groupVoos);
+    /**
+     * Recebe o array voos, trata e formata para o formato final de impressão.
+     */
+    private function FormatJson($groupFormatado){
+        $voos = RequestController::getVoosJson();
+
         $groupMaisBarato = $this->PickGroupMaisBartao($groupFormatado);
 
         $jsonFormatado = [
             'flights' => $voos,
             'groups' =>  $groupFormatado,
-            'totalGroups' => count($groupVoos),
+            'totalGroups' => count($groupFormatado),
             'totalFlights' => count($voos),
             'cheapestPrice' => $groupMaisBarato['totalPrice'],
             'cheapestGroup' => $groupMaisBarato['uniqueId'],
         ];
 
-        return $jsonFormatado;
+        return json_encode($jsonFormatado);
     }
 
+    /**
+     * Recebe o array de grupos de voos, formata e gera um id único.
+     * @return array grupoDevoos = [['uniqueId','totalPrice','outbound'=> [...], 'inbound' => [...]], [...]];
+     */
     private function FormatGroups($groupVoos){
         $groupFormatado = [];
         foreach ($groupVoos as $groupPriceTotal => $group) {
@@ -58,6 +65,10 @@ class GroupsController extends BaseController
         return $groupFormatado;
     }
 
+    /**
+     * Recebe o array de voos já com uniqueId formatado e retorna o mais barato já formatdo com o preco e o id.
+     * @return array grupoDevoo = ['totalPrice','uniqueId'];
+     */
     private function PickGroupMaisBartao($groupsFormatado){
         $groupMaisBarto = [
             'totalPrice' => $groupsFormatado[0]['totalPrice'],
@@ -75,6 +86,10 @@ class GroupsController extends BaseController
         return $groupMaisBarto;
     }
 
+    /**
+     * Recebe o array de voos separa em idas e voltas e depois gera os grupos com o mesmo tipo de tarifa, tendo como chave o valor total de ida + volta.
+     * @return array grupoDevoos = ['precoTotal' => ['idas' => [...], 'voltas' => [...]];
+     */
     private function GroupByPrecoTotal($voos){
         $temp = $this->SepararIdasVoltas($voos);
 
@@ -102,6 +117,10 @@ class GroupsController extends BaseController
         return $group;
     }
 
+    /**
+     * Recebe o array de voos completo e separa em idas e voltas.
+     * @return array ['idas' => [...], 'voltas' => [...]]
+     */
     private function SepararIdasVoltas($voos){
         $idasGroup = [];
         $voltasGroup = [];

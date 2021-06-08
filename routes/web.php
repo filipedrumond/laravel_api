@@ -14,6 +14,6 @@ use App\Http\Controllers\GroupsController;
 |
 */
 
-Route::get('/', [GroupsController::class, 'show']);
+Route::get('/', [GroupsController::class, 'AllGroups']);
 
 Route::get('/all', [GroupsController::class, 'AllGroups']);
