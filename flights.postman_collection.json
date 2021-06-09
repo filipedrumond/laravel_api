@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "6bad995c-72a0-4617-abdd-c46c25b30795",
+		"name": "flights",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8000/all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"all"
+					]
+				},
+				"description": "All Groups"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/all/desc",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/all/desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"all",
+						"desc"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
