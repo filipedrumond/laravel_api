@@ -15,13 +15,17 @@ class GroupsController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function AllGroups(){
+    public function AllGroups($sentido = 'asc'){
         $voos = RequestController::getVoosJson();
 
         $groupVoos = $this->GroupByPrecoTotal($voos);
-        $groupFormatado = $this->FormatGroups($groupVoos);
-        $groupMaisBarato = $this->PickGroupMaisBartao($groupFormatado);
 
+        ksort($groupVoos);
+        if($sentido !== 'asc'){
+            krsort($groupVoos);
+        }
+
+        $groupFormatado = $this->FormatGroups($groupVoos);
         $groupVoos = $this->FormatJson($groupFormatado);
 
         return $groupVoos;

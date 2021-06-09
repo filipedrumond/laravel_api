@@ -17,3 +17,7 @@ use App\Http\Controllers\GroupsController;
 Route::get('/', [GroupsController::class, 'AllGroups']);
 
 Route::get('/all', [GroupsController::class, 'AllGroups']);
+Route::get('/all/{order}', function($order){
+    $temp = new GroupsController();
+    return $temp->AllGroups($order);
+});
